@@ -47,15 +47,13 @@ CREATE TABLE Semester (
     end_date DATE
 );
 
--- Create Course table with updated primary key
+-- Create Course table
 CREATE TABLE Course (
     course_code VARCHAR(255),
     title VARCHAR(255),
     semester_name VARCHAR(255),
-    teacher_username VARCHAR(255),
     PRIMARY KEY (course_code, semester_name),
-    FOREIGN KEY (semester_name) REFERENCES Semester(semester_name),
-    FOREIGN KEY (teacher_username) REFERENCES Teacher(username)
+    FOREIGN KEY (semester_name) REFERENCES Semester(semester_name)
 );
 
 -- Create Class table
@@ -86,13 +84,15 @@ CREATE TABLE Score (
     FOREIGN KEY (quiz_id) REFERENCES Quiz(quiz_id) ON DELETE CASCADE
 );
 
--- Create Teaching_Assignments table for many-to-many relationship between Teacher and Class
+-- Create Teaching_Assignments table for many-to-many relationship between Teacher, Class, and Course
 CREATE TABLE Teaching_Assignments (
     username VARCHAR(255),
+    class_id VARCHAR(255),
     course_code VARCHAR(255),
     semester_name VARCHAR(255),
-    PRIMARY KEY (username, course_code, semester_name),
+    PRIMARY KEY (username, class_id, course_code, semester_name),
     FOREIGN KEY (username) REFERENCES Teacher(username) ON DELETE CASCADE,
+    FOREIGN KEY (class_id) REFERENCES Class(class_id) ON DELETE CASCADE,
     FOREIGN KEY (course_code, semester_name) REFERENCES Course(course_code, semester_name) ON DELETE CASCADE
 );
 
@@ -142,9 +142,10 @@ INSERT INTO Score (username, quiz_id, score)
 VALUES ('student01', 'quiz01', 85);
 
 -- Insert data into Teaching_Assignments table
-INSERT INTO Teaching_Assignments (username, course_code, semester_name)
-VALUES ('teacher01', 'MATH101', 'Fall 2023');
+INSERT INTO Teaching_Assignments (username, class_id)
+VALUES ('teacher01', 'class01');
 
 -- Insert data into Enrollment table
 INSERT INTO Enrollment (username, class_id)
 VALUES ('student01', 'class01');
+
